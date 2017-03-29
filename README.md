@@ -16,5 +16,6 @@ Configure which VPN is monitored and how often network connections are polled:
 How do I run this?
 
  1. Get the code
- 2. Build the project in VS2015+
- 3. Run the output, VpnStatus.exe
+ 2. Update [App.config's](VpnStatus/App.config) `VpnName` to match yours
+ 3. Build the project in VS2015+
+ 4. Run the output, VpnStatus.exe
