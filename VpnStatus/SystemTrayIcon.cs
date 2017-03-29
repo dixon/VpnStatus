@@ -30,7 +30,7 @@ namespace VpnStatus
         {
             var isConnected = Program.IsVpnConnected;
             _notifyIcon.Icon = isConnected ? Resources.icon_connected : Resources.icon_disconnected;;
-            _notifyIcon.Text = $"VPN Status: {Program.Settings.VpnName}: {(isConnected ? "Connected" : "Disconnected")}";
+            _notifyIcon.Text = $"VPN Status: {Settings.VpnName}: {(isConnected ? "Connected" : "Disconnected")}";
         }
 
         private void InitNotifyIcon()
