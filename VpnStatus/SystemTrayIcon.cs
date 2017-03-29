@@ -35,26 +35,24 @@ namespace VpnStatus
 
         private void InitNotifyIcon()
         {
-            _notifyIcon = new NotifyIcon
-            {
-                Visible = true
-            };
+            _notifyIcon = new NotifyIcon();
 
             // left-clicking icon in tray should open Control Panel > Network Connections
             _notifyIcon.MouseClick += (o, args) => { if (args.Button == MouseButtons.Left) { Process.Start("ncpa.cpl"); } };
 
+            // set icon and text
             Update();
+
+            _notifyIcon.Visible = true;
         }
 
         private void InitRightClickMenuStrip()
         {
-            _rightClickMenuStrip = new ContextMenuStrip();
+            _rightClickMenuStrip = _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 
             var item = new ToolStripMenuItem("Exit");
             item.Click += (sender, args) => Application.Exit();
             _rightClickMenuStrip.Items.Add(item);
-
-            _notifyIcon.ContextMenuStrip = _rightClickMenuStrip;
         }
     }
 }
