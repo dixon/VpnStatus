@@ -29,7 +29,7 @@ namespace VpnStatus
         {
             var t = new System.Timers.Timer();
 
-            t.Elapsed += (sender, args) => i.UpdateStatusIcon();
+            t.Elapsed += (sender, args) => i.Update();
             t.Interval = Settings.IntervalToPollMs;
             t.Enabled = true;
 

@@ -26,20 +26,24 @@ namespace VpnStatus
             _notifyIcon?.Dispose();
         }
 
-        public void UpdateStatusIcon() => _notifyIcon.Icon = StatusIcon;
+        public void Update()
+        {
+            var isConnected = Program.IsVpnConnected;
+            _notifyIcon.Icon = isConnected ? Resources.icon_connected : Resources.icon_disconnected;;
+            _notifyIcon.Text = $"VPN Status: {Program.Settings.VpnName}: {(isConnected ? "Connected" : "Disconnected")}";
+        }
 
         private void InitNotifyIcon()
         {
             _notifyIcon = new NotifyIcon
             {
-                Text = "VPN Status for " + Program.Settings.VpnName,
                 Visible = true
             };
 
             // left-clicking icon in tray should open Control Panel > Network Connections
             _notifyIcon.MouseClick += (o, args) => { if (args.Button == MouseButtons.Left) { Process.Start("ncpa.cpl"); } };
 
-            UpdateStatusIcon();
+            Update();
         }
 
         private void InitRightClickMenuStrip()
@@ -52,7 +56,5 @@ namespace VpnStatus
 
             _notifyIcon.ContextMenuStrip = _rightClickMenuStrip;
         }
-
-        private static Icon StatusIcon => Program.IsVpnConnected ? Resources.icon_connected : Resources.icon_disconnected;
     }
 }
