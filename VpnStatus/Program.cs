@@ -36,10 +36,11 @@ namespace VpnStatus
             return t;
         }
 
-        public static bool IsVpnConnected =>
+        public static bool IsVpnConnected => VpnInterface?.OperationalStatus == OperationalStatus.Up;
+
+        private static NetworkInterface VpnInterface => 
             NetworkInterface.GetAllNetworkInterfaces()
-                            .Any(i => i.OperationalStatus == OperationalStatus.Up 
-                                   && Settings.VpnName.Equals(i.Name, StringComparison.InvariantCultureIgnoreCase));
+                            .SingleOrDefault(i => (i.Name ?? "").Equals(Settings.VpnName, StringComparison.InvariantCultureIgnoreCase));
 
         /// <summary>
         /// Understands parsing values from the App.config file's &lt;appSettings&gt; items.
