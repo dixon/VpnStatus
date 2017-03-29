@@ -32,7 +32,7 @@ namespace VpnStatus
         {
             _notifyIcon = new NotifyIcon
             {
-                Text = "VPN Status for " + Program.VpnName,
+                Text = "VPN Status for " + Program.Settings.VpnName,
                 Visible = true
             };
 
