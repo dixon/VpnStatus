@@ -58,7 +58,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="TrayIconApplicationContext.cs" />
-    <Compile Include="VpnState.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="VpnStatusApplicationContext.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

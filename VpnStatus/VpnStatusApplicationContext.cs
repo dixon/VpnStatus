@@ -16,10 +16,10 @@ namespace VpnStatus
         }
 
         private Timer _pollNetworkInterfaces; // Winforms Timer allows polling on main thread, so we can easily update UI components
-        private VpnState? _lastState;
+        private Status? _lastState;
 
-        private ToolStripItem ToggleVpnMenuItem => 
-            ContextMenu?.Items.Cast<ToolStripItem>().SingleOrDefault(i => i.Name == nameof(ToggleVpnMenuItem));
+        private ToolStripItem ToggleStatusMenuItem => 
+            ContextMenu?.Items.Cast<ToolStripItem>().SingleOrDefault(i => i.Name == nameof(ToggleStatusMenuItem));
 
         protected override void OnApplicationExit(EventArgs args)
         {
@@ -40,8 +40,8 @@ namespace VpnStatus
 
         private void InitContextMenu()
         {
-            // "Toggle" text will be replaced in UpdateUi() with either "Connect" or "Disconnect"
-            ContextMenu.Items.Add("Toggle", null, (o, e) => ToggleVpnState()).Name = nameof(ToggleVpnMenuItem);
+            // toggle text will be replaced in UpdateUi() with either "Connect" or "Disconnect"
+            ContextMenu.Items.Add(nameof(ToggleStatusMenuItem), null, (o, e) => ToggleStatus()).Name = nameof(ToggleStatusMenuItem);
             ContextMenu.Items.Add("Exit", null, (o, e) => ExitThread());
         }
 
@@ -60,7 +60,7 @@ namespace VpnStatus
         {
             PausePolling();
 
-            var currentState = VpnStateHelper.CurrentState;
+            var currentState = StatusInquiry.CurrentStatus;
             if (currentState != _lastState)
             {
                 _lastState = currentState;
@@ -70,24 +70,34 @@ namespace VpnStatus
             StartPolling();
         }
 
-        private void ToggleVpnState()
+        private void ToggleStatus()
         {
             PausePolling();
 
-            VpnStateHelper.ToggleVpn();
-            _lastState = VpnStateHelper.CurrentState;
+            // shell out to rasdial, which seems to be the more sure-fire way to manipulate vpn connections
+            var psi = new ProcessStartInfo
+            {
+                FileName = "rasdial",
+                Arguments = $"\"{Settings.VpnName}\" {(StatusInquiry.CurrentStatus.IsConnected() ? "/disconnect" : "")}"
+            };
+            using (var p = Process.Start(psi))
+            {
+                p.WaitForExit();
+            }
+            
+            _lastState = StatusInquiry.CurrentStatus;
             UpdateUi(_lastState.Value);
 
             StartPolling();
         }
 
-        private void UpdateUi(VpnState state)
+        private void UpdateUi(Status state)
         {
             TrayIcon.Icon = state.IsConnected() ? Resources.icon_connected : Resources.icon_disconnected;
             TrayIcon.Text = $"VPN Status: {Settings.VpnName}: {state}";
 
-            ToggleVpnMenuItem.Text = state.IsConnected() ? "Disconnect" : "Connect";
-            ToggleVpnMenuItem.Image = (state.IsConnected() ? Resources.icon_disconnected : Resources.icon_connected).ToBitmap();
+            ToggleStatusMenuItem.Text = state.IsConnected() ? "Disconnect" : "Connect";
+            ToggleStatusMenuItem.Image = (state.IsConnected() ? Resources.icon_disconnected : Resources.icon_connected).ToBitmap();
         }
         
     }
