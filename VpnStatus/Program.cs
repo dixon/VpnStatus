@@ -18,29 +18,7 @@ namespace VpnStatus
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (var icon = new SystemTrayIcon())
-            using (ListenForVpnStatusChanges(icon))
-            {
-                Application.Run();
-            }
+            Application.Run(new VpnStatusApplicationContext());
         }
-
-        private static IDisposable ListenForVpnStatusChanges(SystemTrayIcon i)
-        {
-            var t = new System.Timers.Timer();
-
-            t.Elapsed += (sender, args) => i.Update();
-            t.Interval = Settings.IntervalToPollMs;
-            t.Enabled = true;
-
-            return t;
-        }
-
-        public static bool IsVpnConnected => VpnInterface?.OperationalStatus == OperationalStatus.Up;
-
-        private static NetworkInterface VpnInterface => 
-            NetworkInterface.GetAllNetworkInterfaces()
-                            .SingleOrDefault(i => (i.Name ?? "").Equals(Settings.VpnName, StringComparison.InvariantCultureIgnoreCase));
-        
     }
 }
