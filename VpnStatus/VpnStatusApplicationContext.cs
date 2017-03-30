@@ -85,10 +85,7 @@ namespace VpnStatus
                 p.WaitForExit();
             }
             
-            _lastState = StatusInquiry.CurrentStatus;
-            UpdateUi(_lastState.Value);
-
-            StartPolling();
+            PollForChanges();
         }
 
         private void UpdateUi(Status state)
